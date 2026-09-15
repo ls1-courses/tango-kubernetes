@@ -269,6 +269,9 @@ class LocalDocker(object):
             result.add(re.sub(r".*/([^/]*)", r"\1", row_l[0]))
         return list(result)
 
+    def imageAvailable(self, image):
+        return image in self.getImages()
+
     def getPartialOutput(self, vm):
         """getPartialOutput - Get the partial output of a job.
         It does not check if the docker container exists before executing

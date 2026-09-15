@@ -51,7 +51,6 @@ from config import Config
 
 
 class TangoServer(object):
-
     """TangoServer - Implements the API functions that the server accepts"""
 
     def __init__(self):
@@ -74,6 +73,12 @@ class TangoServer(object):
             from vmms.distDocker import DistDocker
 
             vmms = DistDocker()
+        elif Config.VMMS_NAME == "kubernetes":
+            from vmms.kubernetes import Kubernetes
+
+            vmms = Kubernetes()
+        else:
+            raise ValueError("Unsupported VMMS: %s" % Config.VMMS_NAME)
 
         self.preallocator = Preallocator({Config.VMMS_NAME: vmms})
         self.jobQueue = JobQueue(self.preallocator)
@@ -139,7 +144,7 @@ class TangoServer(object):
             vmms = self.preallocator.vmms[vm.vmms]
             if not vm or num < 0:
                 return -2
-            if vm.image not in vmms.getImages():
+            if not vmms.imageAvailable(vm.image):
                 self.log.error("Invalid image name")
                 return -3
             (name, ext) = os.path.splitext(vm.image)
@@ -310,8 +315,7 @@ class TangoServer(object):
                 errors += 1
             else:
                 vobj = vmms[Config.VMMS_NAME]
-                imgList = vobj.getImages()
-                if job.vm.image not in imgList:
+                if not vobj.imageAvailable(job.vm.image):
                     self.log.error("validateJob: Image not found: %s" % job.vm.image)
                     job.appendTrace(
                         "%s|validateJob: Image not found: %s"
@@ -319,8 +323,7 @@ class TangoServer(object):
                     )
                     errors += 1
                 else:
-                    (name, ext) = os.path.splitext(job.vm.image)
-                    job.vm.name = name
+                    job.vm.name = job.vm.image
 
             if not job.vm.vmms:
                 self.log.error("validateJob: Missing job.vm.vmms")

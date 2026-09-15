@@ -479,6 +479,9 @@ class DistDocker(object):
 
         return list(result)
 
+    def imageAvailable(self, image):
+        return image in self.getImages()
+
     def getPartialOutput(self, vm):
         """getPartialOutput - Get the partial output of a job.
         It does not check if the docker container exists before executing

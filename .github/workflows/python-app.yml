@@ -5,11 +5,11 @@ name: Python application
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   merge_group:
-    branches: [ master ]
+    branches: [ main ]
 jobs:
   linting:
     runs-on: ubuntu-latest
@@ -26,3 +26,9 @@ jobs:
         run: |
           pip install pre-commit
           pre-commit run --all-files
+
+      - name: Kubernetes backend tests
+        run: |
+          cp config.template.py config.py
+          pip install -r requirements.txt
+          python -m unittest tests.testKubernetes

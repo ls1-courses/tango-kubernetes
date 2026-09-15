@@ -89,10 +89,11 @@ class JobManager(object):
                     if Config.REUSE_VMS:
                         preVM = vm
                     else:
-                        preVM = self.preallocator.allocVM(job.vm.name)
+                        # On-demand backends create a fresh isolated instance.
+                        preVM = None
                     vmms = self.vmms[job.vm.vmms]  # Create new vmms object
 
-                if preVM.name is not None:
+                if preVM is not None and preVM.name is not None:
                     self.log.info(
                         "Dispatched job %s:%d to %s [try %d]"
                         % (job.name, job.id, preVM.name, job.retries)

@@ -51,18 +51,19 @@ class Worker(threading.Thread):
         # job-owned instance, simply destroy after job is completed
         if self.job.accessKeyId:
             self.vmms.safeDestroyVM(self.job.vm)
-        elif return_vm:
+        elif return_vm and Config.REUSE_VMS:
             self.preallocator.freeVM(self.job.vm)
         else:
             self.vmms.safeDestroyVM(self.job.vm)
-            if replace_vm:
+            if replace_vm and Config.REUSE_VMS:
                 self.preallocator.createVM(self.job.vm)
 
             # Important: don't remove the VM from the pool until its
             # replacement has been created. Otherwise there is a
             # potential race where the job manager thinks that the
             # pool is empty and creates a spurious vm.
-            self.preallocator.removeVM(self.job.vm)
+            if Config.REUSE_VMS:
+                self.preallocator.removeVM(self.job.vm)
 
     def rescheduleJob(self, hdrfile, ret, err):
         """rescheduleJob - Reschedule a job that has failed because

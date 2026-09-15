@@ -489,3 +489,6 @@ class Ec2SSH(object):
     def getImages(self):
         """getImages - return a constant; actually use the ami specified in config"""
         return ["default.img"]
+
+    def imageAvailable(self, image):
+        return image in self.getImages()

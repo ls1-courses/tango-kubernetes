@@ -38,10 +38,9 @@ class Config(object):
     # for jobs of that courselab
     OUTPUT_FOLDER = "output"
 
-    # VMMS to use. Must be set to a VMMS implemented in vmms/ before
-    # starting Tango.  Options are: "localDocker", "distDocker",
-    # "tashiSSH", and "ec2SSH"
-    VMMS_NAME = "localDocker"
+    # VMMS to use. The Kubernetes backend creates a fresh Job for every
+    # submission and does not require a Docker socket in the Tango container.
+    VMMS_NAME = os.getenv("VMMS_NAME", "localDocker")
 
     # Update this to the 'volumes' directory of your Tango installation if
     # Docker is being used as the VMMs.
@@ -68,7 +67,24 @@ class Config(object):
     NUM_THREADS = 20
 
     # We have the option to reuse VMs or discard them after each use
-    REUSE_VMS = True
+    REUSE_VMS = os.getenv("REUSE_VMS", "true").lower() == "true"
+
+    # Kubernetes VMMS settings. Tango normally runs in-cluster and uses its
+    # ServiceAccount. KUBERNETES_KUBECONFIG is useful for local development.
+    KUBERNETES_NAMESPACE = os.getenv("KUBERNETES_NAMESPACE", "grading")
+    KUBERNETES_RUNTIME_CLASS = os.getenv("KUBERNETES_RUNTIME_CLASS", "grading-runsc")
+    KUBERNETES_SERVICE_ACCOUNT = os.getenv("KUBERNETES_SERVICE_ACCOUNT", "grading-job")
+    KUBERNETES_NODE_SELECTOR_KEY = os.getenv(
+        "KUBERNETES_NODE_SELECTOR_KEY", "grading.ls1.dev/enabled"
+    )
+    KUBERNETES_NODE_SELECTOR_VALUE = os.getenv("KUBERNETES_NODE_SELECTOR_VALUE", "true")
+    KUBERNETES_RUN_AS_USER = int(os.getenv("KUBERNETES_RUN_AS_USER", "1000"))
+    KUBERNETES_INPUT_LIMIT = int(os.getenv("KUBERNETES_INPUT_LIMIT", str(700 * 1024)))
+    KUBERNETES_MAX_CONCURRENT_JOBS = int(
+        os.getenv("KUBERNETES_MAX_CONCURRENT_JOBS", "1")
+    )
+    KUBERNETES_EPHEMERAL_STORAGE = os.getenv("KUBERNETES_EPHEMERAL_STORAGE", "1Gi")
+    KUBERNETES_KUBECONFIG = os.getenv("KUBERNETES_KUBECONFIG")
 
     # Worker waits this many seconds for functions waitvm, copyin (per
     # file), runjob, and copyout (per file) functions to finish.

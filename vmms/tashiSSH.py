@@ -448,3 +448,6 @@ class TashiSSH(object):
         return [
             img for img in os.listdir(Config.TASHI_IMAGE_PATH) if img.endswith(".img")
         ]
+
+    def imageAvailable(self, image):
+        return image in self.getImages()

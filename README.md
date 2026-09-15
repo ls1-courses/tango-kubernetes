@@ -26,6 +26,31 @@ A brief overview of the Tango respository:
 
 Tango was developed as a distributed grading system for [Autolab](https://github.com/autolab/Autolab) at Carnegie Mellon University and has been extensively used for autograding programming assignments in CMU courses.
 
+## Kubernetes backend
+
+This fork adds `VMMS_NAME=kubernetes`. It creates a fresh Kubernetes Job for
+every submission and is intended to run in-cluster with a narrowly scoped
+ServiceAccount. Set `REUSE_VMS=false`; Kubernetes Jobs replace Tango's VM pool.
+
+The backend assumes the grading image contains `sh`, `cp`, `autodriver`, and an
+`autolab` user with UID/GID 1000. The image's `/home/autolab` tree is copied to
+a writable `emptyDir`, then the submitted files and private autograde files are
+overlaid before `autodriver` starts. The namespace is expected to enforce its
+own network and resource policies.
+
+Input files are staged in a per-job Kubernetes Secret and deleted with the Job.
+This initial transport is deliberately capped at 700 KiB. Larger assignments
+need an authenticated object-storage transport rather than increasing the
+Secret limit.
+
+`KUBERNETES_MAX_CONCURRENT_JOBS` defaults to one and gates staging as well as
+Job creation. Keep it equal to the namespace's Job quota so excess submissions
+wait inside Tango instead of being rejected by Kubernetes admission.
+
+Required environment variables and defaults are documented in
+`config.template.py`. The production values used by this project are in the
+separate `grading-platform` deployment repository.
+
 ## Using Tango
 
 Please feel free to use Tango at your school/organization. If you run into any problems with the steps below, you can reach the core developers at `autolab-dev@andrew.cmu.edu` and we would be happy to help.
