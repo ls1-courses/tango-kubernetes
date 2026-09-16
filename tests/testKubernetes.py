@@ -57,7 +57,7 @@ class TestKubernetes(unittest.TestCase):
         self.assertFalse(pod.automount_service_account_token)
         self.assertEqual(pod.service_account_name, "grading-job")
         self.assertEqual(pod.active_deadline_seconds, 120)
-        self.assertEqual(pod.node_selector["grading.ls1.dev/enabled"], "true")
+        self.assertEqual(pod.node_selector["grading.dos.cit.tum.de/enabled"], "true")
         self.assertTrue(pod.security_context.run_as_non_root)
         self.assertEqual(pod.containers[0].resources.limits["cpu"], "2")
         self.assertEqual(pod.containers[0].resources.limits["memory"], "512Mi")

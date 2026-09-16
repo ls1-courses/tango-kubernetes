@@ -113,7 +113,7 @@ class Kubernetes(object):
                 name=secret_name,
                 labels={
                     "app.kubernetes.io/managed-by": "tango",
-                    "grading.ls1.dev/instance": vm.domain_name,
+                    "grading.dos.cit.tum.de/instance": vm.domain_name,
                 },
             ),
             type="Opaque",
@@ -210,7 +210,7 @@ class Kubernetes(object):
             service_account_name=config.Config.KUBERNETES_SERVICE_ACCOUNT,
             tolerations=[
                 client.V1Toleration(
-                    key="grading.ls1.dev/dedicated",
+                    key="grading.dos.cit.tum.de/dedicated",
                     operator="Equal",
                     value="true",
                     effect="NoSchedule",
@@ -221,7 +221,7 @@ class Kubernetes(object):
         labels = {
             "app.kubernetes.io/managed-by": "tango",
             "app.kubernetes.io/name": "grading-job",
-            "grading.ls1.dev/instance": vm.domain_name,
+            "grading.dos.cit.tum.de/instance": vm.domain_name,
         }
         template = client.V1PodTemplateSpec(
             metadata=client.V1ObjectMeta(labels=labels), spec=pod_spec

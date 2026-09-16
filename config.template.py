@@ -75,7 +75,7 @@ class Config(object):
     KUBERNETES_RUNTIME_CLASS = os.getenv("KUBERNETES_RUNTIME_CLASS", "grading-runsc")
     KUBERNETES_SERVICE_ACCOUNT = os.getenv("KUBERNETES_SERVICE_ACCOUNT", "grading-job")
     KUBERNETES_NODE_SELECTOR_KEY = os.getenv(
-        "KUBERNETES_NODE_SELECTOR_KEY", "grading.ls1.dev/enabled"
+        "KUBERNETES_NODE_SELECTOR_KEY", "grading.dos.cit.tum.de/enabled"
     )
     KUBERNETES_NODE_SELECTOR_VALUE = os.getenv("KUBERNETES_NODE_SELECTOR_VALUE", "true")
     KUBERNETES_RUN_AS_USER = int(os.getenv("KUBERNETES_RUN_AS_USER", "1000"))
